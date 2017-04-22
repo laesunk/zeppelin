@@ -82,7 +82,7 @@ public class GitNotebookRepo extends VFSNotebookRepo {
    */
   @Override
   public Revision checkpoint(String pattern, String commitMessage, AuthenticationInfo subject) {
-    Revision revision = null;
+    Revision revision = Revision.EMPTY;
     try {
       List<DiffEntry> gitDiff = git.diff().call();
       if (!gitDiff.isEmpty()) {
@@ -95,7 +95,7 @@ public class GitNotebookRepo extends VFSNotebookRepo {
         LOG.debug("No changes found {}", pattern);
       }
     } catch (GitAPIException e) {
-      LOG.error("Failed to add+comit {} to Git", pattern, e);
+      LOG.error("Failed to add+commit {} to Git", pattern, e);
     }
     return revision;
   }
@@ -161,6 +161,16 @@ public class GitNotebookRepo extends VFSNotebookRepo {
     return history;
   }
 
+  @Override
+  public Note setNoteRevision(String noteId, String revId, AuthenticationInfo subject)
+      throws IOException {
+    Note revisionNote = get(noteId, revId, subject);
+    if (revisionNote != null) {
+      save(revisionNote, subject);
+    }
+    return revisionNote;
+  }
+  
   @Override
   public void close() {
     git.getRepository().close();

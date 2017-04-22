@@ -11,10 +11,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-angular.module('zeppelinWebApp')
-.controller('ElasticInputCtrl', function() {
-  var vm = this;
-  vm.showEditor = false;
-});
+angular.module('zeppelinWebApp').controller('ElasticInputCtrl', ElasticInputCtrl)
+
+function ElasticInputCtrl () {
+  let vm = this
+  vm.showEditor = false
+  vm.value = ''
+}

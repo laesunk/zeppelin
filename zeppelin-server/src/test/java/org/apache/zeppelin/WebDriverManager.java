@@ -122,10 +122,10 @@ public class WebDriverManager {
     while (System.currentTimeMillis() - start < 60 * 1000) {
       // wait for page load
       try {
-        (new WebDriverWait(driver, 5)).until(new ExpectedCondition<Boolean>() {
+        (new WebDriverWait(driver, 30)).until(new ExpectedCondition<Boolean>() {
           @Override
           public Boolean apply(WebDriver d) {
-            return d.findElement(By.xpath("//i[@tooltip='WebSocket Connected']"))
+            return d.findElement(By.xpath("//i[@uib-tooltip='WebSocket Connected']"))
                 .isDisplayed();
           }
         });

@@ -11,28 +11,98 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-angular.module('zeppelinWebApp')
-  .controller('JobCtrl', function($scope) {
+import { ParagraphStatus, } from '../../notebook/paragraph/paragraph.status'
 
-    $scope.init = function(jobInformation) {
-      $scope.progressValue = 0;
-    };
+angular.module('zeppelinWebApp').controller('JobCtrl', JobCtrl)
 
-    $scope.getProgress = function() {
-      var statusList = _.pluck($scope.notebookJob.paragraphs, 'status');
-      var runningJob = _.countBy(statusList, function(status) {
-        if (status === 'FINISHED' || status === 'RUNNING') {
-          return 'matchCount';
-        } else {
-          return 'none';
+function JobCtrl ($scope, $http, baseUrlSrv) {
+  'ngInject'
+
+  $scope.init = function (jobInformation) {
+    $scope.progressValue = 0
+  }
+
+  $scope.getProgress = function () {
+    let statusList = _.pluck($scope.notebookJob.paragraphs, 'status')
+    let runningJob = _.countBy(statusList, function (status) {
+      if (status === ParagraphStatus.RUNNING || status === ParagraphStatus.FINISHED) {
+        return 'matchCount'
+      } else {
+        return 'none'
+      }
+    })
+    let totalCount = statusList.length
+    let runningJobCount = runningJob.matchCount
+    let result = Math.ceil(runningJobCount / totalCount * 100)
+    return isNaN(result) ? 0 : result
+  }
+
+  $scope.runNotebookJob = function (notebookId) {
+    BootstrapDialog.confirm({
+      closable: true,
+      title: '',
+      message: 'Run all paragraphs?',
+      callback: function (result) {
+        if (result) {
+          $http({
+            method: 'POST',
+            url: baseUrlSrv.getRestApiBase() + '/notebook/job/' + notebookId,
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            }
+          }).then(function successCallback (response) {
+            // success
+          }, function errorCallback (errorResponse) {
+            let errorText = 'SERVER ERROR'
+            // eslint-disable-next-line no-extra-boolean-cast
+            if (!!errorResponse.data.message) {
+              errorText = errorResponse.data.message
+            }
+            BootstrapDialog.alert({
+              closable: true,
+              title: 'Execution Failure',
+              message: errorText
+            })
+          })
         }
-      });
-      var totalCount = statusList.length;
-      var runningJobCount = runningJob.matchCount;
-      var result = Math.ceil(runningJobCount / totalCount * 100);
-      return isNaN(result) ? 0 : result;
-    };
+      }
+    })
+  }
 
-  });
+  $scope.stopNotebookJob = function (notebookId) {
+    BootstrapDialog.confirm({
+      closable: true,
+      title: '',
+      message: 'Stop all paragraphs?',
+      callback: function (result) {
+        if (result) {
+          $http({
+            method: 'DELETE',
+            url: baseUrlSrv.getRestApiBase() + '/notebook/job/' + notebookId,
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded'
+            }
+          }).then(function successCallback (response) {
+            // success
+          }, function errorCallback (errorResponse) {
+            let errorText = 'SERVER ERROR'
+            // eslint-disable-next-line no-extra-boolean-cast
+            if (!!errorResponse.data.message) {
+              errorText = errorResponse.data.message
+            }
+            BootstrapDialog.alert({
+              closable: true,
+              title: 'Stop Failure',
+              message: errorText
+            })
+          })
+        }
+      }
+    })
+  }
+
+  $scope.lastExecuteTime = function (unixtime) {
+    return moment.unix(unixtime / 1000).fromNow()
+  }
+}

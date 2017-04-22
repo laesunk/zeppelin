@@ -23,9 +23,9 @@ import java.io.PrintStream;
 import java.io.ByteArrayOutputStream;
 import java.util.*;
 
+import org.apache.zeppelin.completer.CompletionType;
 import org.apache.zeppelin.interpreter.Interpreter;
 import org.apache.zeppelin.interpreter.InterpreterContext;
-import org.apache.zeppelin.interpreter.InterpreterPropertyBuilder;
 import org.apache.zeppelin.interpreter.InterpreterResult;
 import org.apache.zeppelin.interpreter.InterpreterResult.Code;
 import org.apache.zeppelin.interpreter.thrift.InterpreterCompletion;
@@ -135,7 +135,7 @@ public class AlluxioInterpreter extends Interpreter {
   
   private String[] splitAndRemoveEmpty(String st, String splitSeparator) {
     String[] voices = st.split(splitSeparator);
-    ArrayList<String> result = new ArrayList<String>();
+    ArrayList<String> result = new ArrayList<>();
     for (String voice : voices) {
       if (!voice.trim().isEmpty()) {
         result.add(voice);
@@ -145,7 +145,7 @@ public class AlluxioInterpreter extends Interpreter {
   }
 
   private String[] splitAndRemoveEmpty(String[] sts, String splitSeparator) {
-    ArrayList<String> result = new ArrayList<String>();
+    ArrayList<String> result = new ArrayList<>();
     for (String st : sts) {
       result.addAll(Arrays.asList(splitAndRemoveEmpty(st, splitSeparator)));
     }
@@ -166,7 +166,8 @@ public class AlluxioInterpreter extends Interpreter {
   }
 
   @Override
-  public List<InterpreterCompletion> completion(String buf, int cursor) {
+  public List<InterpreterCompletion> completion(String buf, int cursor,
+      InterpreterContext interpreterContext) {
     String[] words = splitAndRemoveEmpty(splitAndRemoveEmpty(buf, "\n"), " ");
     String lastWord = "";
     if (words.length > 0) {
@@ -176,7 +177,7 @@ public class AlluxioInterpreter extends Interpreter {
     List<InterpreterCompletion>  voices = new LinkedList<>();
     for (String command : keywords) {
       if (command.startsWith(lastWord)) {
-        voices.add(new InterpreterCompletion(command, command));
+        voices.add(new InterpreterCompletion(command, command, CompletionType.command.name()));
       }
     }
     return voices;

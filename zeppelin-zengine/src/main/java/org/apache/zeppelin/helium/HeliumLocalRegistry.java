@@ -43,10 +43,9 @@ public class HeliumLocalRegistry extends HeliumRegistry {
 
   }
 
-
   @Override
   public synchronized List<HeliumPackage> getAll() throws IOException {
-    List<HeliumPackage> result = new LinkedList<HeliumPackage>();
+    List<HeliumPackage> result = new LinkedList<>();
 
     File file = new File(uri());
     File [] files = file.listFiles();

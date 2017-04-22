@@ -11,18 +11,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-'use strict';
 
-angular.module('zeppelinWebApp').directive('interpreterDirective', function($timeout) {
+angular.module('zeppelinWebApp').directive('interpreterDirective', interpreterDirective)
+
+function interpreterDirective ($timeout) {
+  'ngInject'
+
   return {
     restrict: 'A',
-    link: function(scope, element, attr) {
+    link: function (scope, element, attr) {
       if (scope.$last === true) {
-        $timeout(function() {
-          var id = 'ngRenderFinished';
-          scope.$emit(id);
-        });
+        $timeout(function () {
+          let id = 'ngRenderFinished'
+          scope.$emit(id)
+        })
       }
     }
-  };
-});
+  }
+}

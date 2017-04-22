@@ -1,6 +1,6 @@
 ---
 layout: page
-title: "Writing a new Application(Experimental)"
+title: "Writing a new Application"
 description: "Apache Zeppelin Application is a package that runs on Interpreter process and displays it's output inside of the notebook. Make your own Application in Apache Zeppelin is quite easy."
 group: development
 ---
@@ -19,7 +19,7 @@ limitations under the License.
 -->
 {% include JB/setup %}
 
-# Writing a new Application (Experimental)
+# Writing a new Application
 
 <div id="toc"></div>
 
@@ -60,7 +60,7 @@ You can check example applications under [./zeppelin-examples](https://github.co
 
 In the development mode, you can run your Application in your IDE as a normal java application and see the result inside of Zeppelin notebook.
 
-`org.apache.zeppelin.interpreter.dev.ZeppelinApplicationDevServer` can run Zeppelin Application in development mode.
+`org.apache.zeppelin.helium.ZeppelinApplicationDevServer` can run Zeppelin Application in development mode.
 
 ```java
 
@@ -73,7 +73,7 @@ public static void main(String[] args) throws Exception {
 
   // run application in devlopment mode with given resource
   // in this case, Clock.class.getName() will be the application class name  
-  ZeppelinApplicationDevServer devServer = new ZeppelinApplicationDevServer(
+  org.apache.zeppelin.helium.ZeppelinApplicationDevServer devServer = new org.apache.zeppelin.helium.ZeppelinApplicationDevServer(
     Clock.class.getName(), pool.getAll());
 
   // start development mode
@@ -91,19 +91,18 @@ In the Zeppelin notebook, run `%dev run` will connect to application running in 
 Package file is a json file that provides information about the application.
 Json file contains the following information
 
-```
+```json
 {
-  name : "[organization].[name]",
-  description : "Description",
-  artifact : "groupId:artifactId:version",
-  className : "your.package.name.YourApplicationClass",
-  resources : [
+  "name" : "[organization].[name]",
+  "description" : "Description",
+  "artifact" : "groupId:artifactId:version",
+  "className" : "your.package.name.YourApplicationClass",
+  "resources" : [
     ["resource.name", ":resource.class.name"],
     ["alternative.resource.name", ":alternative.class.name"]
   ],
-  icon : "<i class="icon"></i>"
+  "icon" : "<i class='icon'></i>"
 }
-
 ```
 
 #### name
@@ -184,4 +183,3 @@ e.g.
 ```
 icon: "<i class='fa fa-clock-o'></i>"
 ```
-
